@@ -12,7 +12,7 @@ class Agent(Base):
     __tablename__ = 'agent'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    phone: Mapped[str] = mapped_column(nullable=False)
+    phone: Mapped[str] = mapped_column(nullable=False, unique=True)
     fullname: Mapped[str] = mapped_column(nullable=False)
 
     meetings: Mapped[List['Meeting']] = relationship(back_populates='agent', lazy='selectin')
