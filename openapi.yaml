@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  title: Law Meeting API
+  version: 0.1.9
+servers:
+  - url: http://localhost:8000/api/
+paths:
+  /user:
+    get:
+      summary: Возвращает информацию о пользователе по номеру телефона
+      description: Возвращает ФИО, название организации, ее тип и встречи
+      parameters:
+        - $ref: "#/components/parameters/phone"
+      responses:
+        '200':
+          description: ...
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/User"
+  /available_time:
+    post:
+      summary: Возвращает доступное время
+      description: Возвращает доступне время для встречи с пользователем в соответствии с местом и датой
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AvailableTimePostBody"
+      responses:
+        '200':
+          description: ...
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AvailableTime"
+  /meeting:
+    get:
+      summary: Возвращает встречу по id
+      description: Возвращает начало, конец, статус, место встречи, а также имя и контакты агента
+      parameters:
+        - $ref: "#/components/parameters/meeting_id"
+      responses:
+        '200':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meeting"
+    post:
+      summary: Создание встречи
+      description: Создает встречу с местом и в определенное время по номеру телефона
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MeetingPostBody"
+      responses:
+        '200':
+          description: ...
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeetingCreated"
+    patch:
+      summary: Обновление статуса встречи
+      description: Обновление статуса встречи по ее id, статус может быть confirmed/completed/canceled
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MeetingPatchBody"
+      responses:
+        '200':
+          description: ...
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        fullname:
+          type: string
+        organization:
+          type: string
+        organization_type:
+          type: string
+        meetings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Meeting"
+      required:
+        - fullname
+        - organization
+        - meetings
+    Meeting:
+      type: object
+      properties:
+        start_datetime:
+          type: string
+        end_datetime:
+          type: string
+        status:
+          type: string
+        place:
+          type: string
+        agent_fullname:
+          type: string
+        agent_phone:
+          type: string
+      required:
+        - start_datetime
+        - end_datetime
+        - status
+        - place
+        - agent_fullname
+        - agent_phone
+    MeetingPostBody:
+      type: object
+      properties:
+        place:
+          type: string
+        start_datetime:
+          type: string
+        phone:
+          type: string
+    MeetingPatchBody:
+      type: object
+      properties:
+        meeting_id:
+          type: integer
+        status:
+          type: string
+      required:
+        - meeting_id
+        - status
+    AvailableTime:
+      type: object
+      properties:
+        start_datetime:
+          type: string
+      required:
+        - start_datetime
+    AvailableTimePostBody:
+      type: object
+      properties:
+        place:
+          type: string
+        date:
+          type: string
+      required:
+        - place
+        - date
+    MeetingCreated:
+      type: object
+      properties:
+        meeting_id:
+          type: integer
+      required:
+        - meeting_id
+  parameters:
+    phone:
+      in: query
+      name: phone
+      required: true
+      schema:
+        type: string
+    meeting_id:
+      in: query
+      name: meeting_id
+      required: true
+      schema:
+        type: integer
