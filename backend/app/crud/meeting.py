@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import User, Agent, Meeting
 
 
-async def create_meeting(session: AsyncSession, user: User, agent: Agent, status: str,
+async def create_meeting(session: AsyncSession, user: User, agent: Agent,
                          start_datetime: datetime.datetime, end_datetime: datetime.datetime,
                          place: str, lon: float, lat: float) -> Meeting:
-    meeting = Meeting(user=user, agent=agent, status=status, start_datetime=start_datetime,
+    meeting = Meeting(user=user, agent=agent, start_datetime=start_datetime,
                       end_datetime=end_datetime, place=place, lon=lon, lat=lat)
     session.add(meeting)
     await session.commit()
