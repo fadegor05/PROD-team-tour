@@ -10,4 +10,4 @@ async def main() -> None:
 if __name__ == '__main__':
     asyncio.run(main())
     app = FastAPI()
-    uvicorn.run(Server(app).get_app())
+    uvicorn.run(Server(app).get_app(), host='0.0.0.0', port=8000)

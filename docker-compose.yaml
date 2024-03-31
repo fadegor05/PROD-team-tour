@@ -6,9 +6,17 @@ services:
     depends_on:
       - postgres
     ports:
-      - 8080:8080
+      - 8000:8000
     build: ./backend/
-  
+
+  frontend:
+    container_name: frontend-meetsync
+    depends_on:
+      - backend
+    ports:
+      - 3000:3000
+    build: ./frontend/
+
   postgres:
     container_name: postgres-meetsync
     image: postgres:16
