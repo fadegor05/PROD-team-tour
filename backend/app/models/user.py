@@ -11,7 +11,7 @@ class User(Base):
     __tablename__ = 'user'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    phone: Mapped[str] = mapped_column(nullable=False)
+    phone: Mapped[str] = mapped_column(nullable=False, unique=True)
     fullname: Mapped[str] = mapped_column(nullable=False)
     organization: Mapped[str] = mapped_column(nullable=False)
     organization_type: Mapped[str] = mapped_column(nullable=False)
