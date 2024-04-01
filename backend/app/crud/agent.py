@@ -1,7 +1,16 @@
+from typing import List
+
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Agent
+
+
+async def get_agents_all(session: AsyncSession) -> List[Agent]:
+    stmt = Select(Agent)
+    result = await session.scalars(stmt)
+    agents = result.all()
+    return agents
 
 
 async def get_agent_by_id(session: AsyncSession, id: int) -> Agent | None:
