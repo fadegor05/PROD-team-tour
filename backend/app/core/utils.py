@@ -29,6 +29,6 @@ async def db_fill_data(session: AsyncSession) -> None:
     for meeting_data in MEETINGS:
         user = await get_user_by_id(session, meeting_data['user_id'])
         agent = await get_agent_by_id(session, meeting_data['agent_id'])
-        await create_meeting(session, user=user, agent=agent, status='placeholder, soon delete',
+        await create_meeting(session, user=user, agent=agent,
                              start_datetime=datetime.datetime.now(), end_datetime=datetime.datetime.now(),
                              place=meeting_data['place'], lon=0, lat=0)
