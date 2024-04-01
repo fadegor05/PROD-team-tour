@@ -21,7 +21,8 @@ async def get_meeting_by_id_handler(meeting_id: Annotated[int, Query()]) -> Meet
                           start_datetime=meeting.start_datetime.isoformat(),
                           end_datetime=meeting.end_datetime.isoformat(),
                           status=meeting.status, place=meeting.place,
-                          agent_fullname=meeting.agent.fullname, agent_phone=meeting.agent.phone)
+                          agent_fullname=meeting.agent.fullname, agent_phone=meeting.agent.phone,
+                          agent_image=meeting.agent.image)
     return response
 
 

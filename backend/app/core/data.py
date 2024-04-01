@@ -29,10 +29,12 @@ AGENTS = [
     {
         'phone': '+79256892353',
         'fullname': 'Соколова Милана Тимуровна',
+        'image': 'https://randomuser.me/api/portraits/men/40.jpg'
     },
     {
         'phone': '+73586231797',
         'fullname': 'Буров Михаил Евгеньевич',
+        'image': 'https://randomuser.me/api/portraits/men/63.jpg'
     }
 ]
 

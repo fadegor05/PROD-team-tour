@@ -9,6 +9,7 @@ class MeetingGet(BaseModel):
     place: str
     agent_fullname: str
     agent_phone: str
+    agent_image: str
 
 
 class MeetingPost(BaseModel):

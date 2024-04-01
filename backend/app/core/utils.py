@@ -39,7 +39,7 @@ async def db_fill_data(session: AsyncSession) -> None:
                           organization_type=user_data['organization_type'])
 
     for agent_data in AGENTS:
-        await create_agent(session, phone=agent_data['phone'], fullname=agent_data['fullname'])
+        await create_agent(session, phone=agent_data['phone'], fullname=agent_data['fullname'], image=agent_data['image'])
 
     for n, meeting_data in enumerate(MEETINGS):
         user = await get_user_by_id(session, meeting_data['user_id'])

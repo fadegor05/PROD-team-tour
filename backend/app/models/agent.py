@@ -14,5 +14,6 @@ class Agent(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     phone: Mapped[str] = mapped_column(nullable=False, unique=True)
     fullname: Mapped[str] = mapped_column(nullable=False)
+    image: Mapped[str] = mapped_column(nullable=False)
 
     meetings: Mapped[List['Meeting']] = relationship(back_populates='agent', lazy='selectin')
