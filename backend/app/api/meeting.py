@@ -1,4 +1,6 @@
 from typing import Annotated
+
+import geocoder
 from fastapi import HTTPException
 from fastapi import Query
 
@@ -44,11 +46,16 @@ async def create_meeting_handler(meeting_schema: MeetingPost) -> MeetingPostResp
             raise HTTPException(status_code=404, detail="user not found")
         start_datetime = datetime.fromisoformat(meeting_schema.start_datetime)
         end_datetime = datetime.fromisoformat(meeting_schema.start_datetime) + timedelta(hours=1)
+        geo = geocoder.osm(meeting_schema.place).json
+        place = geo['address']
+        lon = geo['lng']
+        lat = geo['lat']
+        if not place or not lon or not lat:
+            raise HTTPException(status_code=404, detail='place not found')
         # agent = await get_available_agent(start_datetime, meeting_schema.place)
         agent = await get_agent_by_id(session, id=1)  # PLACEHOLDER
         meeting = await create_meeting(session, user=user, agent=agent, start_datetime=start_datetime,
-                                       end_datetime=end_datetime, place=meeting_schema.place, lon=1.2, lat=1.3)
-        #  TODO: lon и lat должны получаться (как-то), внедрить механику нахождения свободного агента (48-49 стр)
+                                       end_datetime=end_datetime, place=place, lon=lon, lat=lat)
 
     meeting = MeetingPostResponse(meeting_id=meeting.id)
     return meeting
