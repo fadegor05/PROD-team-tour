@@ -18,7 +18,7 @@ class MeetingPost(BaseModel):
 
 
 class MeetingPostResponse(BaseModel):
-    meeting_id: str
+    meeting_id: int
 
 
 class MeetingPatch(BaseModel):
