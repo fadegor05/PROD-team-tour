@@ -11,7 +11,8 @@ async def get_meetings_by_date_and_agent(session: AsyncSession, date: datetime.d
     min_datetime = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
     max_datetime = datetime.datetime(date.year, date.month, date.day, 23, 59, 59)
     stmt = select(Meeting).where(and_(Meeting.start_datetime >= min_datetime, Meeting.end_datetime <= max_datetime,
-                                      Meeting.agent_id == agent.id, Meeting.status == 'confirmed'))
+                                      Meeting.agent_id == agent.id,
+                                      Meeting.status == 'confirmed')).order_by(Meeting.start_datetime)
     result = await session.scalars(stmt)
     meetings = result.all()
     return meetings
