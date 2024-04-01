@@ -1,7 +1,16 @@
+from typing import List
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User
+
+
+async def get_users_all(session: AsyncSession) -> List[User]:
+    stmt = select(User)
+    result = await session.scalars(stmt)
+    users = result.all()
+    return users
 
 
 async def create_user(session: AsyncSession, phone: str, fullname: str, organization: str,
