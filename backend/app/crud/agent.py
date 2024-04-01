@@ -1,26 +1,26 @@
 from typing import List
 
-from sqlalchemy import Select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Agent
 
 
 async def get_agents_all(session: AsyncSession) -> List[Agent]:
-    stmt = Select(Agent)
+    stmt = select(Agent)
     result = await session.scalars(stmt)
     agents = result.all()
     return agents
 
 
 async def get_agent_by_id(session: AsyncSession, id: int) -> Agent | None:
-    stmt = Select(Agent).where(Agent.id == id)
+    stmt = select(Agent).where(Agent.id == id)
     agent = await session.scalar(stmt)
     return agent
 
 
 async def get_agent_by_phone(session: AsyncSession, phone: str) -> Agent | None:
-    stmt = Select(Agent).where(Agent.phone == phone)
+    stmt = select(Agent).where(Agent.phone == phone)
     agent = await session.scalar(stmt)
     return agent
 
