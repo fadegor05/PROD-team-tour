@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const TEST_PHONE_NUMBER = '+76931644323'
+const TEST_PHONE_NUMBER = '+72690300082'
 
 export default function App({ updateUserInfo }) {
   const navigate = useNavigate()
@@ -12,7 +12,7 @@ export default function App({ updateUserInfo }) {
       .then(response => response.json())
       .then(info => {
         updateUserInfo(info)
-        if (info.meetings.length == 0) {
+        if (info.meetings.filter(el => el.status == 'confirmed').length == 0) {
           navigate('/form')
         } else {
           navigate('/meetings')

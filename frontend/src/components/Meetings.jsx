@@ -19,6 +19,31 @@ export default function Meetings({ userInfo }) {
     return newDate[0].toUpperCase() + newDate.slice(1)
   }
 
+  function moveMeeting(id) {
+    console.log(`move ${id}`)
+  }
+
+  function cancelMeeting(id) {
+    fetch('http://localhost:8000/api/meeting', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        meeting_id: 20,
+        status: 'canceled'
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+      .then(response => response.json())
+      .then(info => {
+        if (info.status_code == 200) {
+          navigate('/')
+        }
+      })
+      .catch(err => alert(err))
+    
+  }
+
   return (
     <>
     <UserInfo info={userInfo} />
@@ -26,8 +51,8 @@ export default function Meetings({ userInfo }) {
       <h2 className={styles.title}>Ваши встречи</h2>
       <div className={styles.cardslist}>
         {
-          userInfo.meetings.map(el => 
-            <div className={styles.meetingcard} key={Date.now()}>
+          userInfo.meetings.filter(el => el.status == 'confirmed').map(el => 
+            <div className={styles.meetingcard} key={el.meeting_id}>
               <h3 className={styles.subtitle}>Время и место</h3>
               <div className={styles.infobox}>
                 <p className={styles.infofield}>{formatDate(el.start_datetime)}</p>
@@ -44,8 +69,10 @@ export default function Meetings({ userInfo }) {
                 <p className={styles.infofield}>Регистрация юр. лица</p>
               </div>
               <div className={styles.inputbox}>
-                <button className={`${styles.button} ${styles.movebutton}`}>Перенести</button>
-                <button className={`${styles.button} ${styles.cancelbutton}`}>Отменить</button>
+                <button className={`${styles.button} ${styles.movebutton}`} 
+                  onClick={() => moveMeeting(el.meeting_id)}>Перенести</button>
+                <button className={`${styles.button} ${styles.cancelbutton}`} 
+                  onClick={() => cancelMeeting(el.meeting_id)}>Отменить</button>
               </div>
             </div>  
           )
