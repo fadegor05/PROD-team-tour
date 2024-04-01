@@ -15,6 +15,9 @@ export default function App() {
 
   useEffect(auth, [login])
   return (
-    <div>App</div>
+    <>
+    <h1>MeetSync</h1>
+    <p>Authenticating...</p>
+    </>
   )
 }

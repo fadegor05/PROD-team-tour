@@ -75,6 +75,7 @@
 .newbutton {
     padding: 15px;
     max-width: 350px;
+    margin: 10px 0px 5px 0px ;
 }
 
 .newbutton:hover {
