@@ -16,7 +16,7 @@ class Meeting(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     agent_id: Mapped[int] = mapped_column(ForeignKey('agent.id'))
-    status: Mapped[str] = mapped_column(nullable=False)
+    status: Mapped[str] = mapped_column(nullable=False, default='confirmed')
     start_datetime: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     end_datetime: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     place: Mapped[str] = mapped_column(nullable=False)

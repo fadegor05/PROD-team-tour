@@ -21,4 +21,5 @@ class MeetingPostResponse(BaseModel):
 
 
 class MeetingPatch(BaseModel):
+    meeting_id: int
     status: str
