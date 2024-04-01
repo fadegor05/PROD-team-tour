@@ -1,9 +1,14 @@
-import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styles from './Meetings.module.css'
+import UserInfo from './UserInfo.jsx'
 
 export default function Meetings() {
+  const navigate = useNavigate()
+
   return (
+    <>
+    <UserInfo />
     <div className={styles.card}>
       <h2 className={styles.title}>Ваши встречи</h2>
       <div className={styles.cardslist}>
@@ -71,6 +76,10 @@ export default function Meetings() {
           </div>
         </div>
       </div>
+      <div className={styles.footer}>
+        <button className={`${styles.button} ${styles.newbutton}`} onClick={() => navigate('/form')}>Назначить новую встречу</button>
+      </div>
     </div>
+    </>
   )
 }

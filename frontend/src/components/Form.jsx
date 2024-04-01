@@ -1,13 +1,16 @@
 import { useState } from 'react'
-import { redirect, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import styles from './Form.module.css'
+import UserInfo from './UserInfo.jsx'
 
 export default function Form() {
   const navigate = useNavigate()
   const [status, setStatus] = useState('new')
 
   return (
+    <>
+    <UserInfo />
     <div className={styles.card}>
 
       {status == 'new' &&
@@ -58,5 +61,6 @@ export default function Form() {
       }
 
     </div>
+    </>
   )
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { redirect, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const TEST_PHONE_NUMBER = '+79527774242'
 
