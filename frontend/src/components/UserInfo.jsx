@@ -1,10 +1,10 @@
 import styles from './UserInfo.module.css'
 
-export default function UserInfo() {
+export default function UserInfo({ info }) {
   return (
     <div className={styles.box}>
-        <h3 className={styles.text}>Макс Максбетов</h3>
-        <p className={styles.text}>OOO "Третье джакузи за день"</p>
+      <h3 className={styles.text}>{info.fullname}</h3>
+      <p className={styles.text}>{`${info.organization_type} "${info.organization}"`}</p>
     </div>
   )
 }
