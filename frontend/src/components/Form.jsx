@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Form.module.css'
 import UserInfo from './UserInfo.jsx'
 
-export default function Form() {
+export default function Form({ userInfo }) {
   const navigate = useNavigate()
   const [status, setStatus] = useState('new')
 
   return (
     <>
-    <UserInfo />
+    <UserInfo info={userInfo} />
     <div className={styles.card}>
 
       {status == 'new' &&
