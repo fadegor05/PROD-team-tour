@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Meetings.module.css'
 import UserInfo from './UserInfo.jsx'
 
-export default function Meetings({ userInfo }) {
+export default function Meetings({ userInfo, updateCurrentMeeting }) {
   const navigate = useNavigate()
   
   function formatDate(date) {
@@ -19,15 +19,33 @@ export default function Meetings({ userInfo }) {
     return newDate[0].toUpperCase() + newDate.slice(1)
   }
 
-  function moveMeeting(id) {
-    console.log(`move ${id}`)
+  function moveMeeting(id, meeting) {
+    fetch('http://localhost:8000/api/meeting', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        meeting_id: id,
+        status: 'canceled'
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+      .then(response => response.json())
+      .then(info => {
+        if (info.status_code == 200) {
+          updateCurrentMeeting(meeting)
+          navigate('/form')
+        } else {
+          alert(info.detail)
+        }
+      })
   }
 
   function cancelMeeting(id) {
     fetch('http://localhost:8000/api/meeting', {
       method: 'PATCH',
       body: JSON.stringify({
-        meeting_id: 20,
+        meeting_id: id,
         status: 'canceled'
       }),
       headers: {
@@ -38,10 +56,10 @@ export default function Meetings({ userInfo }) {
       .then(info => {
         if (info.status_code == 200) {
           navigate('/')
+        } else {
+          alert(info.detail)
         }
       })
-      .catch(err => alert(err))
-    
   }
 
   return (
@@ -70,7 +88,7 @@ export default function Meetings({ userInfo }) {
               </div>
               <div className={styles.inputbox}>
                 <button className={`${styles.button} ${styles.movebutton}`} 
-                  onClick={() => moveMeeting(el.meeting_id)}>Перенести</button>
+                  onClick={() => moveMeeting(el.meeting_id, el)}>Перенести</button>
                 <button className={`${styles.button} ${styles.cancelbutton}`} 
                   onClick={() => cancelMeeting(el.meeting_id)}>Отменить</button>
               </div>
