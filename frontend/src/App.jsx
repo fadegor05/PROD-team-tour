@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 const TEST_PHONE_NUMBER = '+72690300082'
 
-export default function App({ updateUserInfo }) {
+export default function App({ updateUserInfo, updatePhone }) {
   const navigate = useNavigate()
   const [login, setLogin] = useState(TEST_PHONE_NUMBER)
 
@@ -12,6 +12,7 @@ export default function App({ updateUserInfo }) {
       .then(response => response.json())
       .then(info => {
         updateUserInfo(info)
+        updatePhone(TEST_PHONE_NUMBER)
         if (info.meetings.filter(el => el.status == 'confirmed').length == 0) {
           navigate('/form')
         } else {
