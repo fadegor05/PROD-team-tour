@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class MeetingGet(BaseModel):
+    meeting_id: int
     start_datetime: str
     end_datetime: str
     status: str

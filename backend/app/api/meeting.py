@@ -17,7 +17,8 @@ async def get_meeting_by_id_handler(meeting_id: Annotated[int, Query()]) -> Meet
         meeting = await get_meeting_by_id(session, id=meeting_id)
     if not meeting:
         raise HTTPException(status_code=404, detail="meeting not found")
-    response = MeetingGet(start_datetime=meeting.start_datetime.isoformat(),
+    response = MeetingGet(meeting_id=meeting.id,
+                          start_datetime=meeting.start_datetime.isoformat(),
                           end_datetime=meeting.end_datetime.isoformat(),
                           status=meeting.status, place=meeting.place,
                           agent_fullname=meeting.agent.fullname, agent_phone=meeting.agent.phone)

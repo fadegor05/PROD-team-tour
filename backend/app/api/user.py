@@ -15,8 +15,10 @@ async def get_user_handler(phone: Annotated[str, Query()]) -> UserGet:
     if not user:
         raise HTTPException(status_code=404, detail="user with such phone not found")
     meetings = user.meetings
-    meetings_response = [MeetingGet(status=meeting.status, place=meeting.place, agent_fullname=meeting.agent.fullname,
-                                    agent_phone=meeting.agent.phone, start_datetime=meeting.start_datetime.isoformat(),
+
+    meetings_response = [MeetingGet(meeting_id=meeting.id, status=meeting.status, place=meeting.place,
+                                    agent_fullname=meeting.agent.fullname, agent_phone=meeting.agent.phone,
+                                    start_datetime=meeting.start_datetime.isoformat(),
                                     end_datetime=meeting.end_datetime.isoformat()) for meeting in meetings]
     user_response = UserGet(fullname=user.fullname, organization=user.organization,
                             organization_type=user.organization_type, meetings=meetings_response)
