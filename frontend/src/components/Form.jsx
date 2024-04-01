@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { redirect, useNavigate } from 'react-router-dom'
 
 import styles from './Form.module.css'
 
 export default function Form() {
+  const navigate = useNavigate()
   const [status, setStatus] = useState('new')
 
   return (
@@ -51,8 +53,7 @@ export default function Form() {
         <p className={styles.infofield}>Паспорт</p>
         <p className={styles.infofield}>Регистрация юр. лица</p>
       </div>
-      <h4 className={styles.infofield}></h4>
-      <button className={styles.confirmbutton} onClick={() => setStatus('new')}>Подтвердить</button>
+      <button className={styles.confirmbutton} onClick={() => {setStatus('new'); navigate('/meetings')}}>Подтвердить</button>
       </>
       }
 
