@@ -39,6 +39,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
           alert(info.detail)
         }
       })
+      .catch(err => console.log(err))
   }
 
   function cancelMeeting(id) {
@@ -60,6 +61,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
           alert(info.detail)
         }
       })
+      .catch(err => console.log(err))
   }
 
   return (
