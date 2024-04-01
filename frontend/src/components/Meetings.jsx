@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styles from './Meetings.module.css'
@@ -5,6 +6,7 @@ import UserInfo from './UserInfo.jsx'
 
 export default function Meetings({ userInfo, updateCurrentMeeting }) {
   const navigate = useNavigate()
+  const [docsList, setDocsList] = useState([])
   
   function formatDate(date) {
     let newDate = new Date(date)
@@ -13,10 +15,17 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
       day: 'numeric',
       month: 'long',
       hour: 'numeric',
-      minute: 'numeric',
-      timeZone: 'UTC'
+      minute: 'numeric'
     }).format(newDate)
     return newDate[0].toUpperCase() + newDate.slice(1)
+  }
+
+  function getDocsInfo() {
+    fetch(`http://localhost:8000/api/documents?org_type=${encodeURIComponent(userInfo.organization_type)}`)
+      .then(response => response.json())
+      .then(info => {
+        setDocsList(info.documents)
+      })
   }
 
   function moveMeeting(id, meeting) {
@@ -43,7 +52,8 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   }
 
   function cancelMeeting(id) {
-    fetch('http://localhost:8000/api/meeting', {
+    if (confirm('Отменить встречу?')) {
+      fetch('http://localhost:8000/api/meeting', {
       method: 'PATCH',
       body: JSON.stringify({
         meeting_id: id,
@@ -62,8 +72,11 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
         }
       })
       .catch(err => console.log(err))
+    }
   }
 
+  
+  useEffect(getDocsInfo, [])
   return (
     <>
     <UserInfo info={userInfo} />
@@ -85,8 +98,11 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
               </div>
               <h3 className={styles.subtitle}>Пакет документов</h3>
               <div className={styles.infobox}>
-                <p className={styles.infofield}>Паспорт</p>
-                <p className={styles.infofield}>Регистрация юр. лица</p>
+                {
+                  docsList.map(el =>
+                    <p className={styles.infofield} key={el}>{el}</p>
+                  )
+                }
               </div>
               <div className={styles.inputbox}>
                 <button className={`${styles.button} ${styles.movebutton}`} 

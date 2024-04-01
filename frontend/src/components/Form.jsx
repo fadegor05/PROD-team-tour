@@ -7,10 +7,11 @@ import UserInfo from './UserInfo.jsx'
 export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, phone }) {
   const navigate = useNavigate()
   const [status, setStatus] = useState('new')
-  const [timesList, setTimeslist] = useState()
-  const [date, setDate] = useState()
-  const [place, setPlace] = useState()
+  const [timesList, setTimeslist] = useState([])
+  const [date, setDate] = useState('')
+  const [place, setPlace] = useState('')
   const [time, setTime] = useState()
+  const [docsList, setDocsList] = useState([])
 
   function timeIntervalFormat(date) {
     let newTime = new Date(date)
@@ -68,6 +69,11 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
   function handleSecondConfirm(meetTime) {
     setStatus('confirm')
     setTime(meetTime)
+    fetch(`http://localhost:8000/api/documents?org_type=${encodeURIComponent(userInfo.organization_type)}`)
+      .then(response => response.json())
+      .then(info => {
+        setDocsList(info.documents)
+      })
   }
 
   function handleFinalConfirm() {
@@ -90,8 +96,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
         }
       })
       .then(info => {
-        console.log(info)
-        navigate('/meetings')
+        navigate('/')
       })
   }
   
@@ -104,10 +109,17 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       <>
       <h2 className={styles.title}>Назначить встречу</h2>
       <h3 className={styles.subtitle}>Дата</h3>
-      <input type="date" className={styles.dateinput} onChange={(e) => setDate(e.target.value)}/>
+      <input type="date" className={styles.dateinput} value={date} onChange={(e) => setDate(e.target.value)}/>
       <h3 className={styles.subtitle}>Место</h3>
-      <input type="text" placeholder="Место встречи" className={styles.textinput} value={currentMeeting.place} onChange={(e) => setPlace(e.target.value)}/>
-      <button className={styles.confirmbutton} onClick={() => handleFirstConfirm()}>Выбрать</button>
+      <input type="text" placeholder="Место встречи" className={styles.textinput} value={place} onChange={(e) => setPlace(e.target.value)}/>
+      <div className={styles.inputbox}>
+        <button className={styles.confirmbutton} onClick={() => {date && place ? handleFirstConfirm() : null}}>Выбрать</button>
+        {
+          userInfo.meetings.filter(el => el.status == 'confirmed').length !== 0 ? 
+          <button className={styles.confirmbutton} onClick={() => navigate('/meetings')}>Назад</button>
+          : null
+        }
+      </div>
       </>
       }
 
@@ -122,6 +134,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
           </div>
           )
       }
+      <button className={styles.confirmbutton} onClick={() => setStatus('new')}>Назад</button>
       </>
       }
 
@@ -135,10 +148,16 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       </div>
       <h3 className={styles.subtitle}>Пакет документов</h3>
       <div className={styles.infobox}>
-        <p className={styles.infofield}>Паспорт</p>
-        <p className={styles.infofield}>Регистрация юр. лица</p>
+        {
+          docsList.map(el => 
+            <p className={styles.infofield} key={el}>{el}</p>  
+          )
+        }
       </div>
-      <button className={styles.confirmbutton} onClick={() => handleFinalConfirm()}>Подтвердить</button>
+      <div className={styles.inputbox}>
+        <button className={styles.confirmbutton} onClick={() => handleFinalConfirm()}>Подтвердить</button>
+        <button className={styles.confirmbutton} onClick={() => setStatus('selectTime')}>Назад</button>
+      </div>
       </>
       }
 

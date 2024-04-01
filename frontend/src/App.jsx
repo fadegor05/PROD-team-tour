@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const TEST_PHONE_NUMBER = '+72690300082'
+const TEST_PHONE_NUMBER = '+79527774242'
 
 export default function App({ updateUserInfo, updatePhone }) {
   const navigate = useNavigate()
