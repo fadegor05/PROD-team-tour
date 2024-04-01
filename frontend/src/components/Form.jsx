@@ -4,10 +4,15 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Form.module.css'
 import UserInfo from './UserInfo.jsx'
 
-export default function Form({ userInfo }) {
+export default function Form({ userInfo, currentMeeting, updateCurrentMeeting }) {
   const navigate = useNavigate()
   const [status, setStatus] = useState('new')
 
+  function handleFirstConfirm() {
+    setStatus('selectTime')
+    updateCurrentMeeting({})
+  }
+  
   return (
     <>
     <UserInfo info={userInfo} />
@@ -19,8 +24,8 @@ export default function Form({ userInfo }) {
       <h3 className={styles.subtitle}>Дата</h3>
       <input type="date" className={styles.dateinput}/>
       <h3 className={styles.subtitle}>Место</h3>
-      <input type="text" placeholder="Место встречи" className={styles.textinput}/>
-      <button className={styles.confirmbutton} onClick={() => setStatus('selectTime')}>Выбрать</button>
+      <input type="text" placeholder="Место встречи" className={styles.textinput} value={currentMeeting.place}/>
+      <button className={styles.confirmbutton} onClick={() => handleFirstConfirm()}>Выбрать</button>
       </>
       }
 
