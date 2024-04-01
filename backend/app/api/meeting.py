@@ -20,7 +20,7 @@ async def get_meeting_by_id_handler(meeting_id: Annotated[int, Query()]) -> Meet
     response = MeetingGet(start_datetime=meeting.start_datetime.isoformat(),
                           end_datetime=meeting.end_datetime.isoformat(),
                           status=meeting.status, place=meeting.place,
-                          agent_fullname=meeting.agent.full_name, agent_phone=meeting.agent.phone)
+                          agent_fullname=meeting.agent.fullname, agent_phone=meeting.agent.phone)
     return response
 
 
@@ -38,6 +38,8 @@ async def update_meeting_handler(meeting_schema: MeetingPatch):
 async def create_meeting_handler(meeting_schema: MeetingPost) -> MeetingPostResponse:
     async with async_session() as session:
         user = await get_user_by_phone(session, meeting_schema.phone)
+        if not user:
+            raise HTTPException(status_code=404, detail="user not found")
         start_datetime = datetime.fromisoformat(meeting_schema.start_datetime)
         end_datetime = datetime.fromisoformat(meeting_schema.start_datetime) + timedelta(hours=1)
         # agent = await get_available_agent(start_datetime, meeting_schema.place)
