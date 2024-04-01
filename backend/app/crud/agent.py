@@ -25,8 +25,8 @@ async def get_agent_by_phone(session: AsyncSession, phone: str) -> Agent | None:
     return agent
 
 
-async def create_agent(session: AsyncSession, phone: str, fullname: str) -> Agent:
-    agent = Agent(phone=phone, fullname=fullname)
+async def create_agent(session: AsyncSession, phone: str, fullname: str, image: str) -> Agent:
+    agent = Agent(phone=phone, fullname=fullname, image=image)
     session.add(agent)
     await session.commit()
     await session.refresh(agent)
