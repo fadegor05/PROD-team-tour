@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom'
 
 import styles from './Form.module.css'
 import UserInfo from './UserInfo.jsx'
+import LoadingGif from './LoadingGif.jsx'
 
 export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, phone }) {
   const navigate = useNavigate()
   const [status, setStatus] = useState('new')
+  const [isLoading, setIsLoading] = useState(false)
   const [timesList, setTimeslist] = useState([])
   const [date, setDate] = useState(currentMeeting.start_datetime ? currentMeeting.start_datetime : '')
   const [place, setPlace] = useState(currentMeeting.place ? currentMeeting.place : '')
@@ -41,6 +43,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
   }
 
   function handleFirstConfirm() {
+    setIsLoading(true)
     fetch('/api/available_time', {
       method: 'POST',
       body: JSON.stringify({
@@ -52,30 +55,42 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       }
     })
       .then(response => {
-        if (!response.ok) {
-          alert(JSON.stringify(response))
-        } else {
+        if (response.ok) {
           return response.json()
         }
+        throw response
       })
       .then(info => {
         setTimeslist(info)
         setStatus('selectTime')
         })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        setStatus('new')
+      })
+      .finally(() => setIsLoading(false))
   }
 
   function handleSecondConfirm(meetTime) {
     setStatus('confirm')
     setTime(meetTime)
+    setIsLoading(true)
     fetch(`/api/documents?org_type=${encodeURIComponent(userInfo.organization_type)}`)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        throw response
+      })
       .then(info => {
         setDocsList(info.documents)
       })
+      .catch(error => console.log(error))
+      .finally(() => setIsLoading(false))
   }
 
   function handleFinalConfirm() {
+    setIsLoading(true)
     fetch('/api/meeting', {
       method: 'POST',
       body: JSON.stringify({
@@ -88,11 +103,10 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       }
     })
       .then(response => {
-        if (!response.ok) {
-          alert(response)
-        } else {
+        if (response.ok) {
           return response.json()
         }
+        throw response
       })
       .then(info => {
         if (currentMeeting != '') {
@@ -106,21 +120,22 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
               'Content-type': 'application/json; charset=UTF-8'
             }
           })
-            .then(response => response.json())
-            .then(info => {
-              if (info.status_code == 200) {
-                null
-              } else {
-                alert(info.detail)
+            .then(response => {
+              if (response.ok) {
+                return response.json()
               }
+              throw response
             })
-            .catch(err => console.log(err))
-            updateCurrentMeeting('')
+            .then(info => {
+              updateCurrentMeeting('')
+              navigate('/')
+            })
+            .catch(err => console.error(err))
         }
-        setTimeout(() => {
-          navigate('/')
-        }, 250);
+        navigate('/')
       })
+      .catch(error => console.error(error))
+      .finally(() => setIsLoading(false))
   }
   
   return (
@@ -136,11 +151,16 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       <h3 className={styles.subtitle}>Место</h3>
       <input type="text" placeholder="Место встречи" className={styles.textinput} value={place} onChange={(e) => setPlace(e.target.value)}/>
       <div className={styles.inputbox}>
+        {isLoading ? <LoadingGif />
+        :
+        <>
         <button className={styles.confirmbutton} onClick={() => {date && place ? handleFirstConfirm() : null}}>Выбрать</button>
         {
           userInfo.meetings.filter(el => el.status == 'confirmed').length !== 0 ? 
           <button className={styles.confirmbutton} onClick={() => navigate('/')}>Назад</button>
           : null
+        }
+        </>
         }
       </div>
       </>
@@ -165,6 +185,9 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       {status == 'confirm' &&
       <>
       <h2 className={styles.title}>Подтверждение</h2>
+      {isLoading ? <LoadingGif />
+      :
+      <>
       <h3 className={styles.subtitle}>Время и место</h3>
       <div className={styles.infobox}>
         <p className={styles.infofield}>{formatMeetDate(time)}</p>
@@ -182,6 +205,8 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
         <button className={styles.confirmbutton} onClick={() => handleFinalConfirm()}>Подтвердить</button>
         <button className={styles.confirmbutton} onClick={() => setStatus('selectTime')}>Назад</button>
       </div>
+      </>
+      }
       </>
       }
 

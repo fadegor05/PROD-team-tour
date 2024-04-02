@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom'
 
 import styles from './Meetings.module.css'
 import UserInfo from './UserInfo.jsx'
+import LoadingGif from './LoadingGif.jsx'
 
 export default function Meetings({ userInfo, updateCurrentMeeting }) {
   const navigate = useNavigate()
   const [docsList, setDocsList] = useState([])
+  const [isLoading, setisLoading] = useState(false)
+  const [areDocumentsLoading, setAreDocumentsLoading] = useState(false)
   
   function formatDate(date) {
     let newDate = new Date(date)
@@ -21,11 +24,19 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   }
 
   function getDocsInfo() {
+    setAreDocumentsLoading(true)
     fetch(`/api/documents?org_type=${encodeURIComponent(userInfo.organization_type)}`)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        throw response
+      })
       .then(info => {
         setDocsList(info.documents)
+        setAreDocumentsLoading(false)
       })
+      .catch(error => console.error(error))
   }
 
   function moveMeeting(meeting) {
@@ -34,6 +45,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   }
 
   function cancelMeeting(id, el) {
+    setisLoading(true)
     if (confirm(`${formatDate(el.start_datetime)}\n${el.place}\nОтменить встречу?`)) {
       fetch('/api/meeting', {
       method: 'PATCH',
@@ -45,16 +57,22 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
         'Content-type': 'application/json; charset=UTF-8'
       }
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        throw response
+      })
       .then(info => {
         if (info.status_code == 200) {
           navigate('/')
         } else {
-          alert(info.detail)
+          console.log(info.detail)
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => console.error(err))
     }
+    setisLoading(false)
   }
 
   
@@ -63,6 +81,9 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   return (
     <>
     <UserInfo info={userInfo} />
+    {isLoading ? <LoadingGif />
+    :
+    <>
     <div className={styles.card}>
       <h2 className={styles.title}>Ваши встречи</h2>
       <div className={styles.cardslist}>
@@ -81,6 +102,8 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
                 <p className={styles.infofield}>{el.agent_phone}</p>
               </div>
               <h3 className={styles.subtitle}>Пакет документов</h3>
+              {areDocumentsLoading ? <LoadingGif />
+              :
               <div className={styles.infobox}>
                 {
                   docsList.map(el =>
@@ -88,6 +111,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
                   )
                 }
               </div>
+              }
               <div className={styles.inputbox}>
                 <button className={`${styles.button} ${styles.movebutton}`} 
                   onClick={() => moveMeeting(el)}>Перенести</button>
@@ -102,6 +126,8 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
         <button className={`${styles.button} ${styles.newbutton}`} onClick={() => navigate('/form')}>Назначить новую встречу</button>
       </div>
     </div>
+    </>
+    }
     </>
   )
 }
