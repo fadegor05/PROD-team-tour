@@ -10,6 +10,7 @@ class MeetingGet(BaseModel):
     agent_fullname: str
     agent_phone: str
     agent_image: str
+    delay_status: int
 
 
 class MeetingPost(BaseModel):
@@ -25,3 +26,7 @@ class MeetingPostResponse(BaseModel):
 class MeetingPatch(BaseModel):
     meeting_id: int
     status: str
+
+class MeetingDelayPatch(BaseModel):
+    meeting_id: int
+    delay_status: int

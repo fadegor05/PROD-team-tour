@@ -16,4 +16,4 @@ async def main_schedule():
 async def on_startup_db_init():
     await db_init()
     await db_fill()
-    await scheduler.start()
+    #await scheduler.start()
