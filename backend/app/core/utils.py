@@ -66,7 +66,7 @@ async def db_fill_data(session: AsyncSession) -> None:
         await create_meeting(session, user=user, agent=agent,
                              start_datetime=start_datetime,
                              end_datetime=start_datetime + timedelta(hours=1),
-                             place=meeting_data['place'], lon=0, lat=0)
+                             place=meeting_data['place'], lon=meeting_data['lon'], lat=meeting_data['lat'])
 
 
 async def get_available_time_slots(session: AsyncSession, date: datetime, lon: float,
