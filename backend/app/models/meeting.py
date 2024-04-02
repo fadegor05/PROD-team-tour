@@ -19,6 +19,7 @@ class Meeting(Base):
     status: Mapped[str] = mapped_column(nullable=False, default='confirmed')
     start_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
     end_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
+    is_notified: Mapped[bool] = mapped_column(nullable=False, default=False)
     place: Mapped[str] = mapped_column(nullable=False)
     lon: Mapped[float] = mapped_column(nullable=False)
     lat: Mapped[float] = mapped_column(nullable=False)
