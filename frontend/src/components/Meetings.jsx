@@ -33,9 +33,9 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
     navigate('/form')
   }
 
-  function cancelMeeting(id) {
-    if (confirm('Отменить встречу?')) {
-      fetch('/api/meeting', {
+  function cancelMeeting(id, el) {
+    if (confirm(`${formatDate(el.start_datetime)}\n${el.place}\nОтменить встречу?`)) {
+      fetch('http://localhost:8000/api/meeting', {
       method: 'PATCH',
       body: JSON.stringify({
         meeting_id: id,
@@ -59,6 +59,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
 
   
   useEffect(getDocsInfo, [])
+  useEffect(() => updateCurrentMeeting(''),[])
   return (
     <>
     <UserInfo info={userInfo} />
@@ -75,6 +76,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
               </div>
               <h3 className={styles.subtitle}>Представитель</h3>
               <div className={styles.infobox}>
+                <img src={el.agent_image} alt="Фото" className={styles.agentpicture}/>
                 <p className={styles.infofield}>{el.agent_fullname}</p>
                 <p className={styles.infofield}>{el.agent_phone}</p>
               </div>
@@ -90,7 +92,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
                 <button className={`${styles.button} ${styles.movebutton}`} 
                   onClick={() => moveMeeting(el)}>Перенести</button>
                 <button className={`${styles.button} ${styles.cancelbutton}`} 
-                  onClick={() => cancelMeeting(el.meeting_id)}>Отменить</button>
+                  onClick={() => cancelMeeting(el.meeting_id, el)}>Отменить</button>
               </div>
             </div>  
           )
