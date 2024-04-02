@@ -14,6 +14,9 @@
     .textinput {
         width: 60%;
     }
+    .inputbox {
+        justify-content: space-between;
+    }
   }
   
   /* ----- Mobile ------ */
@@ -32,6 +35,7 @@
         width: 100%;
         position: absolute;
         bottom: 3%;
+        justify-content: center;
     }
     .confirmbutton, .selectbutton {
         width: 40%;
@@ -116,7 +120,6 @@
 
 .inputbox {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 }
 
