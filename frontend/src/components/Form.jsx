@@ -132,7 +132,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       <>
       <h2 className={styles.title}>Назначить встречу</h2>
       <h3 className={styles.subtitle}>Дата</h3>
-      <input type="date" className={styles.dateinput} value={new Date(date).toISOString().split('T')[0]} onChange={(e) => setDate(e.target.value)}/>
+      <input type="date" className={styles.dateinput} value={date !== '' ? new Date(date).toISOString().split('T')[0] : ''} onChange={(e) => setDate(e.target.value)}/>
       <h3 className={styles.subtitle}>Место</h3>
       <input type="text" placeholder="Место встречи" className={styles.textinput} value={place} onChange={(e) => setPlace(e.target.value)}/>
       <div className={styles.inputbox}>
