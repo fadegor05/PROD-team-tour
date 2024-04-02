@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AddToCalendarButton } from 'add-to-calendar-button-react'
 
 import styles from './Meetings.module.css'
 import UserInfo from './UserInfo.jsx'
@@ -90,6 +91,19 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
         {
           userInfo.meetings.filter(el => el.status == 'confirmed').map(el => 
             <div className={styles.meetingcard} key={el.meeting_id}>
+              <div className={styles.calendarbutton}>
+              <AddToCalendarButton
+                    className={styles.calendarbutton}
+                    name="Встреча с представителем банка"
+                    startDate={new Date(el.start_datetime).toISOString().split('T')[0]}
+                    startTime={new Intl.DateTimeFormat('ru-RU', {hour: '2-digit', minute: '2-digit'}).format(new Date(el.start_datetime))}
+                    endTime={new Intl.DateTimeFormat('ru-RU', {hour: '2-digit', minute: '2-digit'}).format(new Date(new Date(el.start_datetime).setHours(new Date(el.start_datetime).getHours() + 1)))}
+                    location={el.place}
+                    listStyle='modal'
+                    options="'Apple','Google','iCal','Outlook.com','Yahoo','MicrosoftTeams','Microsoft365'"
+                    buttonStyle="round"
+                    hideTextLabelButton/>
+              </div>
               <h3 className={styles.subtitle}>Время и место</h3>
               <div className={styles.infobox}>
                 <p className={styles.infofield}>{formatDate(el.start_datetime)}</p>
