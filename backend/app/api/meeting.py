@@ -4,6 +4,7 @@ import geocoder
 from fastapi import HTTPException
 from fastapi import Query
 
+from app.core.utils import get_available_time_slots
 from app.crud.agent import get_agent_by_id
 from app.crud.meeting import get_meeting_by_id, create_meeting, update_meeting_status
 from app.api.router import api_router
@@ -45,17 +46,13 @@ async def create_meeting_handler(meeting_schema: MeetingPost) -> MeetingPostResp
         if not user:
             raise HTTPException(status_code=404, detail="user not found")
         start_datetime = datetime.fromisoformat(meeting_schema.start_datetime)
-        end_datetime = datetime.fromisoformat(meeting_schema.start_datetime) + timedelta(hours=1)
+        end_datetime = start_datetime + timedelta(hours=1)
         geo = geocoder.osm(meeting_schema.place).json
-        place = geo['address']
-        lon = geo['lng']
-        lat = geo['lat']
-        if not place or not lon or not lat:
+        if not geo or not geo['address'] or not geo['lng'] or not geo['lat']:
             raise HTTPException(status_code=404, detail='place not found')
-        # agent = await get_available_agent(start_datetime, meeting_schema.place)
         agent = await get_agent_by_id(session, id=1)  # PLACEHOLDER
         meeting = await create_meeting(session, user=user, agent=agent, start_datetime=start_datetime,
-                                       end_datetime=end_datetime, place=place, lon=lon, lat=lat)
+                                       end_datetime=end_datetime, place=geo['address'], lon=geo['lng'], lat=geo['lat'])
 
     meeting = MeetingPostResponse(meeting_id=meeting.id)
     return meeting
