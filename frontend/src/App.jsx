@@ -8,7 +8,7 @@ export default function App({ updateUserInfo, updatePhone }) {
   const [login, setLogin] = useState(TEST_PHONE_NUMBER)
 
   function auth() {
-    fetch(`http://localhost:8000/api/user?phone=${encodeURIComponent(TEST_PHONE_NUMBER)}`)
+    fetch(`/api/user?phone=${encodeURIComponent(TEST_PHONE_NUMBER)}`)
       .then(response => response.json())
       .then(info => {
         updateUserInfo(info)

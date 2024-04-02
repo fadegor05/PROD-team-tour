@@ -41,7 +41,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
   }
 
   function handleFirstConfirm() {
-    fetch('http://localhost:8000/api/available_time', {
+    fetch('/api/available_time', {
       method: 'POST',
       body: JSON.stringify({
         place: place,
@@ -68,7 +68,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
   function handleSecondConfirm(meetTime) {
     setStatus('confirm')
     setTime(meetTime)
-    fetch(`http://localhost:8000/api/documents?org_type=${encodeURIComponent(userInfo.organization_type)}`)
+    fetch(`/api/documents?org_type=${encodeURIComponent(userInfo.organization_type)}`)
       .then(response => response.json())
       .then(info => {
         setDocsList(info.documents)
@@ -76,7 +76,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
   }
 
   function handleFinalConfirm() {
-    fetch('http://localhost:8000/api/meeting', {
+    fetch('/api/meeting', {
       method: 'POST',
       body: JSON.stringify({
         place: place,
@@ -96,7 +96,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       })
       .then(info => {
         if (currentMeeting != '') {
-           fetch('http://localhost:8000/api/meeting', {
+           fetch('/api/meeting', {
             method: 'PATCH',
               body: JSON.stringify({
               meeting_id: currentMeeting.meeting_id,
