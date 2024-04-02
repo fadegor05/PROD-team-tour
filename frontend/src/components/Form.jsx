@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import styles from './Form.module.css'
@@ -8,8 +8,8 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
   const navigate = useNavigate()
   const [status, setStatus] = useState('new')
   const [timesList, setTimeslist] = useState([])
-  const [date, setDate] = useState('')
-  const [place, setPlace] = useState('')
+  const [date, setDate] = useState(currentMeeting.start_datetime ? currentMeeting.start_datetime : '')
+  const [place, setPlace] = useState(currentMeeting.place ? currentMeeting.place : '')
   const [time, setTime] = useState()
   const [docsList, setDocsList] = useState([])
 
@@ -61,7 +61,6 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       .then(info => {
         setTimeslist(info)
         setStatus('selectTime')
-        updateCurrentMeeting({})
         })
       .catch(err => console.log(err))
   }
@@ -96,7 +95,31 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
         }
       })
       .then(info => {
-        navigate('/')
+        if (currentMeeting != '') {
+           fetch('http://localhost:8000/api/meeting', {
+            method: 'PATCH',
+              body: JSON.stringify({
+              meeting_id: currentMeeting.meeting_id,
+              status: 'canceled'
+            }),
+            headers: {
+              'Content-type': 'application/json; charset=UTF-8'
+            }
+          })
+            .then(response => response.json())
+            .then(info => {
+              if (info.status_code == 200) {
+                null
+              } else {
+                alert(info.detail)
+              }
+            })
+            .catch(err => console.log(err))
+            updateCurrentMeeting('')
+        }
+        setTimeout(() => {
+          navigate('/')
+        }, 250);
       })
   }
   
@@ -109,14 +132,14 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       <>
       <h2 className={styles.title}>Назначить встречу</h2>
       <h3 className={styles.subtitle}>Дата</h3>
-      <input type="date" className={styles.dateinput} value={date} onChange={(e) => setDate(e.target.value)}/>
+      <input type="date" className={styles.dateinput} value={new Date(date).toISOString().split('T')[0]} onChange={(e) => setDate(e.target.value)}/>
       <h3 className={styles.subtitle}>Место</h3>
       <input type="text" placeholder="Место встречи" className={styles.textinput} value={place} onChange={(e) => setPlace(e.target.value)}/>
       <div className={styles.inputbox}>
         <button className={styles.confirmbutton} onClick={() => {date && place ? handleFirstConfirm() : null}}>Выбрать</button>
         {
           userInfo.meetings.filter(el => el.status == 'confirmed').length !== 0 ? 
-          <button className={styles.confirmbutton} onClick={() => navigate('/meetings')}>Назад</button>
+          <button className={styles.confirmbutton} onClick={() => navigate('/')}>Назад</button>
           : null
         }
       </div>

@@ -28,27 +28,9 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
       })
   }
 
-  function moveMeeting(id, meeting) {
-    fetch('http://localhost:8000/api/meeting', {
-      method: 'PATCH',
-      body: JSON.stringify({
-        meeting_id: id,
-        status: 'canceled'
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8'
-      }
-    })
-      .then(response => response.json())
-      .then(info => {
-        if (info.status_code == 200) {
-          updateCurrentMeeting(meeting)
-          navigate('/form')
-        } else {
-          alert(info.detail)
-        }
-      })
-      .catch(err => console.log(err))
+  function moveMeeting(meeting) {
+    updateCurrentMeeting(meeting)
+    navigate('/form')
   }
 
   function cancelMeeting(id) {
@@ -106,7 +88,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
               </div>
               <div className={styles.inputbox}>
                 <button className={`${styles.button} ${styles.movebutton}`} 
-                  onClick={() => moveMeeting(el.meeting_id, el)}>Перенести</button>
+                  onClick={() => moveMeeting(el)}>Перенести</button>
                 <button className={`${styles.button} ${styles.cancelbutton}`} 
                   onClick={() => cancelMeeting(el.meeting_id)}>Отменить</button>
               </div>
