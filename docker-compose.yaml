@@ -9,6 +9,12 @@ services:
       - 8000:8000
     restart: always
     build: ./backend/
+  
+  background:
+    container_name: background-meetsync
+    depends_on:
+      - backend
+    build: ./background/
 
   frontend:
     container_name: frontend-meetsync
