@@ -9,5 +9,14 @@ export default defineConfig({
     port: 80,
     strictPort: true,
     host: true
-  }
+  },
+  server: {
+    proxy: {
+      '/api/': {
+        target: 'http://backend:8000/',
+        changeOrigin: true,
+        pathRewrite: { '^/api/': '' },
+      },
+    },
+  },
 })
