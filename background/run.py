@@ -9,9 +9,11 @@ def main():
     cur = conn.cursor()
 
     complete_meetings_handler(conn, cur)
+    notify_users_handler(conn, cur)
 
     cur.close()
     conn.close()
+
 
 if __name__ == '__main__':
     main()
