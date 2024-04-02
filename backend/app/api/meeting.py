@@ -1,3 +1,4 @@
+from random import randint
 from typing import Annotated
 
 import geocoder
@@ -50,7 +51,12 @@ async def create_meeting_handler(meeting_schema: MeetingPost) -> MeetingPostResp
         geo = geocoder.osm(meeting_schema.place).json
         if not geo or not geo['address'] or not geo['lng'] or not geo['lat']:
             raise HTTPException(status_code=404, detail='place not found')
-        agent = await get_agent_by_id(session, id=1)  # PLACEHOLDER
+        available_time_slots = await get_available_time_slots(session, start_datetime, geo['lng'], geo['lat'])
+        available_agents = available_time_slots.get(start_datetime)
+        if not available_agents:
+            raise HTTPException(status_code=404)
+        agent_id = available_agents[randint(0, len(available_agents) - 1)]
+        agent = await get_agent_by_id(session, agent_id)
         meeting = await create_meeting(session, user=user, agent=agent, start_datetime=start_datetime,
                                        end_datetime=end_datetime, place=geo['address'], lon=geo['lng'], lat=geo['lat'])
 
