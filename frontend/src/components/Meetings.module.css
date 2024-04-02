@@ -132,9 +132,7 @@
 
 .delaybutton {
     padding: 15px;
-    border: transparent;
     border-radius: 5px;
-    color: white;
     cursor: pointer;
     transition: all .15s ease;
 }
@@ -144,9 +142,13 @@
 }
 
 .delaybutton15 {
-    background-color: #f39c12;
+    border: 2px solid #27ae60;
+    background-color: white;
+    color: black;
 }
 
 .delaybutton30 {
-    background-color: #c0392b;
+    border: 2px solid #27ae60;
+    background-color: #27ae60;
+    color: white;
 }

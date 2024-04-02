@@ -16,7 +16,7 @@ export default function Router() {
       <Routes>
         <Route path='/' element={<App updateUserInfo={(userInfo) => setUserInfo(userInfo)} updatePhone={(phone) => setPhone(phone)}/>}/>
         <Route path='/form' element={<Form userInfo={userInfo} currentMeeting={currentMeeting} updateCurrentMeeting={(meeting) => setCurrentMeeting(meeting)} phone={phone}/>}/>
-        <Route path='/meetings' element={<Meetings userInfo={userInfo} updateCurrentMeeting={(meeting) => setCurrentMeeting(meeting)}/>}/>
+        <Route path='/meetings' element={<Meetings newUserInfo={userInfo} updateCurrentMeeting={(meeting) => setCurrentMeeting(meeting)} phone={phone}/>}/>
     </Routes>
     </BrowserRouter>
   )
