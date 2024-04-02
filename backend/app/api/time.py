@@ -44,5 +44,8 @@ async def available_time_handler(request_schema: AvailableTimePost) -> List[Avai
             for agent_datetime in agent_datetime_list:
                 if agent_datetime in available_time:
                     available_time[agent_datetime].append(agent.id)
+        for time in list(available_time):
+            if len(available_time[time]) == 0:
+                del available_time[time]
     response = [AvailableTimePostResponse(start_datetime=time.isoformat()) for time in list(available_time)]
     return response
