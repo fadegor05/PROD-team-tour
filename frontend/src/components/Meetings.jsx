@@ -6,12 +6,28 @@ import styles from './Meetings.module.css'
 import UserInfo from './UserInfo.jsx'
 import LoadingGif from './LoadingGif.jsx'
 
-export default function Meetings({ userInfo, updateCurrentMeeting }) {
+export default function Meetings({ newUserInfo, updateCurrentMeeting, phone }) {
   const navigate = useNavigate()
+  const [userInfo, setUserInfo] = useState(newUserInfo)
   const [docsList, setDocsList] = useState([])
   const [isLoading, setisLoading] = useState(false)
   const [areDocumentsLoading, setAreDocumentsLoading] = useState(false)
+  const [isDelayLoading, setIsDelayLoading] = useState(false)
   
+  function updateUserInfo() {
+    fetch(`/api/user?phone=${encodeURIComponent(phone)}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        throw response
+      })
+      .then(info => {
+        setUserInfo(info)
+      })
+      .catch(error => console.error(error))
+  }
+
   function formatDate(date, delay) {
     let newDate = new Date(date)
     if (delay != 0) {
@@ -60,8 +76,8 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   }
 
   function cancelMeeting(id, el) {
-    setisLoading(true)
     if (confirm(`${formatDate(el.start_datetime, el.delay_status)}\n${el.place}\nОтменить встречу?`)) {
+      setisLoading(true)
       fetch('/api/meeting', {
       method: 'PATCH',
       body: JSON.stringify({
@@ -84,13 +100,14 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
         } else {
           console.log(info.detail)
         }
+        setisLoading(false)
       })
       .catch(err => console.error(err))
     }
-    setisLoading(false)
   }
 
   function handleDelay(delay_time, id) {
+    setIsDelayLoading(true)
     fetch('/api/meeting_delay', {
       method: 'PATCH',
       body: JSON.stringify({
@@ -107,7 +124,10 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
         }
         throw response
       })
-      .then(info => navigate('/'))
+      .then(info => {
+        updateUserInfo()
+        setIsDelayLoading(false)
+      })
   }
 
   
@@ -143,15 +163,18 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
               </div>
               <h3 className={styles.subtitle}>Время и место</h3>
               <div className={styles.infobox}>
-                <p className={styles.infofield} style={isToday(el) ? {color: '#e74c3c', fontWeight: 'bold'} : {}}>{formatDate(el.start_datetime, el.delay_status)}</p>
+                <p className={styles.infofield} style={isToday(el) ? {color: '#2ecc71', fontWeight: 'bold'} : {}}>{formatDate(el.start_datetime, el.delay_status)}</p>
                 <p className={styles.infofield}>{el.place}</p>
               </div>
+              {isDelayLoading ? <LoadingGif />
+              :
+              <>
               {isToday(el)
               ?
               <div className={styles.delayblock}>
                 {el.delay_status == 0 &&
                 <>
-                <h3 className={styles.subtitle} style={{color: '#e74c3c'}}>Опоздаю на:</h3>
+                <h3 className={styles.subtitle} style={{color: '#2ecc71'}}>Опоздаю на:</h3>
                 <div className={styles.inputbox}>
                   <button className={`${styles.delaybutton15} ${styles.delaybutton}`} onClick={() => handleDelay(15, el.meeting_id)}>15 минут</button>
                   <button className={`${styles.delaybutton30} ${styles.delaybutton}`} onClick={() => handleDelay(30, el.meeting_id)}>30 минут</button>
@@ -160,7 +183,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
                 }
                 {el.delay_status == 15 &&
                 <>
-                <h3 className={styles.subtitle} style={{color: '#e74c3c'}}>Опоздаю на:</h3>
+                <h3 className={styles.subtitle} style={{color: '#2ecc71'}}>Опоздаю на:</h3>
                 <div className={styles.inputbox}>
                   <button className={`${styles.delaybutton30} ${styles.delaybutton}`} onClick={() => handleDelay(30, el.meeting_id)}>30 минут</button>
                 </div>
@@ -173,6 +196,8 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
               </div>
               :
               null
+              }
+              </>
               }
               <h3 className={styles.subtitle}>Представитель</h3>
               <div className={styles.infobox}>
