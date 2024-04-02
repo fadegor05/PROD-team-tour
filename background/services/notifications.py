@@ -1,7 +1,7 @@
 import datetime
 import requests
 
-SMS_KEY = 'xpaul6@gmail.com:38RApr1UuYnQmnm-fTt7Vf28q-EUPTgH'
+from config import SMS_KEY
 
 
 def send_notification(user_phone: str, start_datetime: datetime.datetime, agent_name: str, agent_phone: str):
