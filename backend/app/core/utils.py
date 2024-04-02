@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import List
+from typing import Dict, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +8,20 @@ from app.crud.agent import get_agents_all, create_agent, get_agent_by_id
 from app.crud.meeting import create_meeting
 from app.crud.user import get_users_all, create_user, get_user_by_id
 from app.database import async_session
+
+
+async def generate_datetime_dict(date: datetime, from_hour: int = 9, to_hour: int = 20) -> Dict:
+    start_time = datetime(date.year, date.month, date.day, from_hour, 0, 0)
+    end_time = datetime(date.year, date.month, date.day, to_hour, 0, 0)
+
+    time_values = {}
+
+    current_time = start_time
+    while current_time <= end_time:
+        time_values[current_time] = []
+        current_time += timedelta(minutes=15)
+
+    return time_values
 
 
 async def generate_datetime_list(date: datetime, from_hour: int = 9, to_hour: int = 20) -> List[datetime]:
