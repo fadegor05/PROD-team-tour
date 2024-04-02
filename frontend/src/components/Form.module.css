@@ -108,3 +108,8 @@
 .infofield {
     margin: 5px 0px 5px 0px;
 }
+
+.inputbox {
+    display: flex;
+    justify-content: space-between;
+}
