@@ -35,7 +35,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
 
   function cancelMeeting(id, el) {
     if (confirm(`${formatDate(el.start_datetime)}\n${el.place}\nОтменить встречу?`)) {
-      fetch('http://localhost:8000/api/meeting', {
+      fetch('/api/meeting', {
       method: 'PATCH',
       body: JSON.stringify({
         meeting_id: id,
