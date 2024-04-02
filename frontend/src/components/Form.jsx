@@ -154,8 +154,6 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
         timesList.map(el => 
           <div className={styles.listitem} onClick={() => handleSecondConfirm(el.start_datetime)} key={el.start_datetime}>
             <div className={styles.timeblock}>{timeIntervalFormat(el.start_datetime)}</div>
-            {/* <div className={styles.timeblock}><p className={styles.infofield}>{timeIntervalFormat(el.start_datetime)}</p></div> */}
-            {/* <button className={styles.selectbutton} onClick={() => handleSecondConfirm(el.start_datetime)}>Выбрать</button> */}
           </div>
           )
       }
