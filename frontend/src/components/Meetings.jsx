@@ -9,6 +9,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   const navigate = useNavigate()
   const [docsList, setDocsList] = useState([])
   const [isLoading, setisLoading] = useState(false)
+  const [areDocumentsLoading, setAreDocumentsLoading] = useState(false)
   
   function formatDate(date) {
     let newDate = new Date(date)
@@ -23,6 +24,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   }
 
   function getDocsInfo() {
+    setAreDocumentsLoading(true)
     fetch(`/api/documents?org_type=${encodeURIComponent(userInfo.organization_type)}`)
       .then(response => {
         if (response.ok) {
@@ -32,6 +34,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
       })
       .then(info => {
         setDocsList(info.documents)
+        setAreDocumentsLoading(false)
       })
       .catch(error => console.error(error))
   }
@@ -99,6 +102,8 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
                 <p className={styles.infofield}>{el.agent_phone}</p>
               </div>
               <h3 className={styles.subtitle}>Пакет документов</h3>
+              {areDocumentsLoading ? <LoadingGif />
+              :
               <div className={styles.infobox}>
                 {
                   docsList.map(el =>
@@ -106,6 +111,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
                   )
                 }
               </div>
+              }
               <div className={styles.inputbox}>
                 <button className={`${styles.button} ${styles.movebutton}`} 
                   onClick={() => moveMeeting(el)}>Перенести</button>
