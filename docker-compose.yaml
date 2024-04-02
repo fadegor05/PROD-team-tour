@@ -13,7 +13,8 @@ services:
   background:
     container_name: background-meetsync
     depends_on:
-      - backend
+      - postgres
+    restart: always
     build: ./background/
 
   frontend:
