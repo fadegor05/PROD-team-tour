@@ -29,30 +29,41 @@ AGENTS = [
     {
         'phone': '+79256892353',
         'fullname': 'Соколова Милана Тимуровна',
-        'image': 'https://randomuser.me/api/portraits/men/40.jpg'
+        'image': 'https://randomuser.me/api/portraits/women/70.jpg'
     },
     {
         'phone': '+73586231797',
         'fullname': 'Буров Михаил Евгеньевич',
         'image': 'https://randomuser.me/api/portraits/men/63.jpg'
+    },
+{
+        'phone': '+79484363578',
+        'fullname': 'Вишняков Мирослав Тимофеевич',
+        'image': 'https://randomuser.me/api/portraits/men/40.jpg'
     }
 ]
 
 MEETINGS = [
     {
         'user_id': 2,
-        'place': 'г. Самара, Песчаная ул., д. 24',
-        'agent_id': 1
+        'place': 'Ленинградская, 23, Самара, Россия',
+        'agent_id': 1,
+        'lon': 50.087724,
+        'lat': 53.188191
     },
     {
         'user_id': 3,
-        'place': 'г. Самара, Южная ул., к. 2',
-        'agent_id': 2
+        'place': 'Дыбенко, 27А, Самара, Россия',
+        'agent_id': 2,
+        'lon': 50.192775,
+        'lat': 53.205458
     },
     {
         'user_id': 4,
-        'place': 'г. Самара, Солнечный пер., к. 11',
-        'agent_id': 1
+        'place': 'Школа №26, 5-я Просека, 91Б, Самара, Россия',
+        'agent_id': 1,
+        'lon': 50.178560,
+        'lat': 53.244586
     },
 ]
 
