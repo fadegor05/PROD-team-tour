@@ -2,6 +2,7 @@ import psycopg2
 
 from config import POSTGRES_URL
 from services.meetings import complete_meetings_handler
+from services.notifications import notify_users_handler
 
 
 def main():
