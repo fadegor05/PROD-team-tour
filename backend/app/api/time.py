@@ -19,6 +19,5 @@ async def available_time_handler(request_schema: AvailableTimePost) -> List[Avai
         if not geo or not geo['lng'] or not geo['lat']:
             raise HTTPException(status_code=404, detail='place not found')
         available_time_slots = await get_available_time_slots(session, date, geo['lng'], geo['lat'])
-        print(available_time_slots)
     response = [AvailableTimePostResponse(start_datetime=time.isoformat()) for time in list(available_time_slots)]
     return response
