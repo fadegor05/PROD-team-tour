@@ -40,6 +40,17 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
       .catch(error => console.error(error))
   }
 
+  function isToday(el) {
+    if (new Date().getDate() == new Date(el.start_datetime).getDate()
+    &&
+    new Date().getMonth() == new Date(el.start_datetime).getMonth()
+    &&
+    new Date().getFullYear() == new Date(el.start_datetime).getFullYear()) {
+      return true
+    }
+    return false
+  }
+
   function moveMeeting(meeting) {
     updateCurrentMeeting(meeting)
     navigate('/form')
@@ -76,6 +87,10 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
     setisLoading(false)
   }
 
+  function handleDelay(delay_time) {
+    console.log(delay_time)
+  }
+
   
   useEffect(getDocsInfo, [])
   useEffect(() => updateCurrentMeeting(''),[])
@@ -89,7 +104,10 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
       <h2 className={styles.title}>Ваши встречи</h2>
       <div className={styles.cardslist}>
         {
-          userInfo.meetings.filter(el => el.status == 'confirmed').map(el => 
+          userInfo.meetings
+            .filter(el => el.status == 'confirmed')
+            .sort((a, b) => new Date(a.start_datetime) - new Date(b.start_datetime))
+            .map(el => 
             <div className={styles.meetingcard} key={el.meeting_id}>
               <div className={styles.calendarbutton}>
               <AddToCalendarButton
@@ -106,9 +124,21 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
               </div>
               <h3 className={styles.subtitle}>Время и место</h3>
               <div className={styles.infobox}>
-                <p className={styles.infofield}>{formatDate(el.start_datetime)}</p>
+                <p className={styles.infofield} style={isToday(el) ? {color: '#e74c3c', fontWeight: 'bold'} : {}}>{formatDate(el.start_datetime)}</p>
                 <p className={styles.infofield}>{el.place}</p>
               </div>
+              {isToday(el)
+              ?
+              <div className={styles.delayblock}>
+                <h3 className={styles.subtitle} style={{color: '#e74c3c'}}>Опоздаю на:</h3>
+                <div className={styles.inputbox}>
+                  <button className={`${styles.delaybutton15} ${styles.delaybutton}`} onClick={() => handleDelay(15)}>15 минут</button>
+                  <button className={`${styles.delaybutton30} ${styles.delaybutton}`} onClick={() => handleDelay(30)}>30 минут</button>
+                </div>
+              </div>
+              :
+              null
+              }
               <h3 className={styles.subtitle}>Представитель</h3>
               <div className={styles.infobox}>
                 <img src={el.agent_image} alt="Фото" className={styles.agentpicture}/>
