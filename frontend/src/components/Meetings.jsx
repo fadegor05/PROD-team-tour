@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AddToCalendarButton } from 'add-to-calendar-button-react'
 
 import styles from './Meetings.module.css'
 import UserInfo from './UserInfo.jsx'
@@ -11,8 +12,11 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   const [isLoading, setisLoading] = useState(false)
   const [areDocumentsLoading, setAreDocumentsLoading] = useState(false)
   
-  function formatDate(date) {
+  function formatDate(date, delay) {
     let newDate = new Date(date)
+    if (delay != 0) {
+      newDate = new Date(newDate.setMinutes(newDate.getMinutes() + delay))
+    }
     newDate = new Intl.DateTimeFormat('ru-RU', {
       weekday: 'long',
       day: 'numeric',
@@ -39,6 +43,17 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
       .catch(error => console.error(error))
   }
 
+  function isToday(el) {
+    if (new Date().getDate() == new Date(el.start_datetime).getDate()
+    &&
+    new Date().getMonth() == new Date(el.start_datetime).getMonth()
+    &&
+    new Date().getFullYear() == new Date(el.start_datetime).getFullYear()) {
+      return true
+    }
+    return false
+  }
+
   function moveMeeting(meeting) {
     updateCurrentMeeting(meeting)
     navigate('/form')
@@ -46,7 +61,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
 
   function cancelMeeting(id, el) {
     setisLoading(true)
-    if (confirm(`${formatDate(el.start_datetime)}\n${el.place}\nОтменить встречу?`)) {
+    if (confirm(`${formatDate(el.start_datetime, el.delay_status)}\n${el.place}\nОтменить встречу?`)) {
       fetch('/api/meeting', {
       method: 'PATCH',
       body: JSON.stringify({
@@ -75,6 +90,26 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
     setisLoading(false)
   }
 
+  function handleDelay(delay_time, id) {
+    fetch('/api/meeting_delay', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        meeting_id: id,
+        delay_status: delay_time
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        throw response
+      })
+      .then(info => navigate('/'))
+  }
+
   
   useEffect(getDocsInfo, [])
   useEffect(() => updateCurrentMeeting(''),[])
@@ -88,13 +123,57 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
       <h2 className={styles.title}>Ваши встречи</h2>
       <div className={styles.cardslist}>
         {
-          userInfo.meetings.filter(el => el.status == 'confirmed').map(el => 
+          userInfo.meetings
+            .filter(el => el.status == 'confirmed')
+            .sort((a, b) => new Date(a.start_datetime) - new Date(b.start_datetime))
+            .map(el => 
             <div className={styles.meetingcard} key={el.meeting_id}>
+              <div className={styles.calendarbutton}>
+              <AddToCalendarButton
+                    className={styles.calendarbutton}
+                    name="Встреча с представителем банка"
+                    startDate={new Date(el.start_datetime).toISOString().split('T')[0]}
+                    startTime={new Intl.DateTimeFormat('ru-RU', {hour: '2-digit', minute: '2-digit'}).format(new Date(el.start_datetime))}
+                    endTime={new Intl.DateTimeFormat('ru-RU', {hour: '2-digit', minute: '2-digit'}).format(new Date(new Date(el.start_datetime).setHours(new Date(el.start_datetime).getHours() + 1)))}
+                    location={el.place}
+                    listStyle='modal'
+                    options="'Apple','Google','iCal','Outlook.com','Yahoo','MicrosoftTeams','Microsoft365'"
+                    buttonStyle="round"
+                    hideTextLabelButton/>
+              </div>
               <h3 className={styles.subtitle}>Время и место</h3>
               <div className={styles.infobox}>
-                <p className={styles.infofield}>{formatDate(el.start_datetime)}</p>
+                <p className={styles.infofield} style={isToday(el) ? {color: '#e74c3c', fontWeight: 'bold'} : {}}>{formatDate(el.start_datetime, el.delay_status)}</p>
                 <p className={styles.infofield}>{el.place}</p>
               </div>
+              {isToday(el)
+              ?
+              <div className={styles.delayblock}>
+                {el.delay_status == 0 &&
+                <>
+                <h3 className={styles.subtitle} style={{color: '#e74c3c'}}>Опоздаю на:</h3>
+                <div className={styles.inputbox}>
+                  <button className={`${styles.delaybutton15} ${styles.delaybutton}`} onClick={() => handleDelay(15, el.meeting_id)}>15 минут</button>
+                  <button className={`${styles.delaybutton30} ${styles.delaybutton}`} onClick={() => handleDelay(30, el.meeting_id)}>30 минут</button>
+                </div>
+                </>
+                }
+                {el.delay_status == 15 &&
+                <>
+                <h3 className={styles.subtitle} style={{color: '#e74c3c'}}>Опоздаю на:</h3>
+                <div className={styles.inputbox}>
+                  <button className={`${styles.delaybutton30} ${styles.delaybutton}`} onClick={() => handleDelay(30, el.meeting_id)}>30 минут</button>
+                </div>
+                </>
+                }
+                {el.delay_status == 30 &&
+                <>
+                </>
+                }
+              </div>
+              :
+              null
+              }
               <h3 className={styles.subtitle}>Представитель</h3>
               <div className={styles.infobox}>
                 <img src={el.agent_image} alt="Фото" className={styles.agentpicture}/>

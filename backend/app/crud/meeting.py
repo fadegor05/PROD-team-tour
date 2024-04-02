@@ -40,3 +40,10 @@ async def get_meeting_by_id(session: AsyncSession, id: int) -> Meeting | None:
     stmt = select(Meeting).where(Meeting.id == id)
     meeting = await session.scalar(stmt)
     return meeting
+
+
+async def update_delay_status(session: AsyncSession, meeting: Meeting, delay_status: int) -> Meeting:
+    meeting.delay_status = delay_status
+    await session.commit()
+    await session.refresh(meeting)
+    return meeting

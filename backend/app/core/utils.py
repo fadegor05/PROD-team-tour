@@ -81,7 +81,7 @@ async def get_available_time_slots(session: AsyncSession, date: datetime, lon: f
             duration = await get_route_duration([(meeting.lon, meeting.lat), (lon, lat)])
             duration = math.ceil(duration / 15) * 15
             start_datetime = meeting.start_datetime - timedelta(hours=1, minutes=duration)
-            end_datetime = meeting.end_datetime + timedelta(minutes=duration)
+            end_datetime = meeting.end_datetime + timedelta(minutes=duration+30)  # 30 mins opportunity to delay meeting
             current_datetime = start_datetime
             while current_datetime < end_datetime:
                 if current_datetime in agent_time_slots_list:

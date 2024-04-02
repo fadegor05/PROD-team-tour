@@ -23,6 +23,7 @@ class Meeting(Base):
     place: Mapped[str] = mapped_column(nullable=False)
     lon: Mapped[float] = mapped_column(nullable=False)
     lat: Mapped[float] = mapped_column(nullable=False)
+    delay_status: Mapped[int] = mapped_column(nullable=False, default=0)
 
     user: Mapped['User'] = relationship(back_populates='meetings', lazy='selectin')
     agent: Mapped['Agent'] = relationship(back_populates='meetings', lazy='selectin')
