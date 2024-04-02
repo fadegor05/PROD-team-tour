@@ -18,6 +18,7 @@ async def get_user_handler(phone: Annotated[str, Query()]) -> UserGet:
 
     meetings_response = [MeetingGet(meeting_id=meeting.id, status=meeting.status, place=meeting.place,
                                     agent_fullname=meeting.agent.fullname, agent_phone=meeting.agent.phone,
+                                    agent_image=meeting.agent.image,
                                     start_datetime=meeting.start_datetime.isoformat(),
                                     end_datetime=meeting.end_datetime.isoformat()) for meeting in meetings]
     user_response = UserGet(fullname=user.fullname, organization=user.organization,
