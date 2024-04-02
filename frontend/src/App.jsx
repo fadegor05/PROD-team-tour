@@ -3,14 +3,32 @@ import { useNavigate } from 'react-router-dom'
 
 import LoadingGif from './components/LoadingGif'
 
-const TEST_PHONE_NUMBER = '+79527774242'
-
 export default function App({ updateUserInfo, updatePhone }) {
   const navigate = useNavigate()
-  const [login, setLogin] = useState(TEST_PHONE_NUMBER)
+  const [login, setLogin] = useState()
+
+  function getLogin() {
+    if (!localStorage.getItem('phone')) {
+      fetch('/api/create_user')
+        .then(response => {
+          if (response.ok) {
+            return response.json()
+          }
+          throw response
+        })
+        .then(info => {
+          setLogin(info.phone)
+          localStorage.setItem('phone', info.phone)
+        })
+        .catch(error => console.log(error))
+    } else {
+      setLogin(localStorage.getItem('phone'))
+    }
+  }
 
   function auth() {
-    fetch(`/api/user?phone=${encodeURIComponent(TEST_PHONE_NUMBER)}`)
+    if (login) {
+      fetch(`/api/user?phone=${encodeURIComponent(login)}`)
       .then(response => {
         if (response.ok) {
           return response.json()
@@ -19,7 +37,7 @@ export default function App({ updateUserInfo, updatePhone }) {
       })
       .then(info => {
         updateUserInfo(info)
-        updatePhone(TEST_PHONE_NUMBER)
+        updatePhone(login)
         if (info.meetings.filter(el => el.status == 'confirmed').length == 0) {
           navigate('/form')
         } else {
@@ -27,8 +45,10 @@ export default function App({ updateUserInfo, updatePhone }) {
         }
       })
       .catch(error => console.error(error))
+    }
   }
 
+  useEffect(getLogin, [])
   useEffect(auth, [login])
   return (
     <>
