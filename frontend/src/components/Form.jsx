@@ -53,7 +53,7 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
     })
       .then(response => {
         if (!response.ok) {
-          alert(response)
+          alert(JSON.stringify(response))
         } else {
           return response.json()
         }

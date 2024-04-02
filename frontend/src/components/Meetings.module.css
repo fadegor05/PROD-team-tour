@@ -45,6 +45,11 @@
     margin: 5px 0px 5px 0px;
 }
 
+.agentpicture {
+    max-height: 75px;
+    border-radius: 50%;
+}
+
 .inputbox {
     display: flex;
     justify-content: space-between;
