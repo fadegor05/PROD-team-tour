@@ -1,3 +1,5 @@
+import math
+from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Dict, List
 
@@ -5,9 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.data import USERS, AGENTS, MEETINGS
 from app.crud.agent import get_agents_all, create_agent, get_agent_by_id
-from app.crud.meeting import create_meeting
+from app.crud.meeting import create_meeting, get_meetings_by_date_and_agent
 from app.crud.user import get_users_all, create_user, get_user_by_id
 from app.database import async_session
+from app.service.service import get_route_duration
 
 
 async def generate_datetime_dict(date: datetime, from_hour: int = 9, to_hour: int = 20) -> Dict:
@@ -64,3 +67,30 @@ async def db_fill_data(session: AsyncSession) -> None:
                              start_datetime=start_datetime,
                              end_datetime=start_datetime + timedelta(hours=1),
                              place=meeting_data['place'], lon=0, lat=0)
+
+
+async def get_available_time_slots(session: AsyncSession, date: datetime, lon: float,
+                                   lat: float) -> Dict[datetime, List[int]]:
+    agents = await get_agents_all(session)
+    time_slots_list = await generate_datetime_list(date)
+    available_time_slots = await generate_datetime_dict(date)
+    for agent in agents:
+        meetings = await get_meetings_by_date_and_agent(session, date, agent)
+        agent_time_slots_list = deepcopy(time_slots_list)
+        for n, meeting in enumerate(meetings):
+            duration = await get_route_duration([(meeting.lon, meeting.lat), (lon, lat)])
+            duration = math.ceil(duration / 15) * 15
+            start_datetime = meeting.start_datetime - timedelta(hours=1, minutes=duration)
+            end_datetime = meeting.end_datetime + timedelta(minutes=duration)
+            current_datetime = start_datetime
+            while current_datetime < end_datetime:
+                if current_datetime in agent_time_slots_list:
+                    agent_time_slots_list.remove(current_datetime)
+                current_datetime += timedelta(minutes=15)
+        for agent_datetime in agent_time_slots_list:
+            if agent_datetime in available_time_slots:
+                available_time_slots[agent_datetime].append(agent.id)
+    for time_slot in list(available_time_slots):
+        if not available_time_slots[time_slot]:
+            del available_time_slots[time_slot]
+    return available_time_slots
