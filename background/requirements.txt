@@ -1,0 +1,7 @@
+psycopg2-binary==2.9.9
+
+pip~=23.2.1
+certifi~=2024.2.2
+urllib3~=2.2.1
+idna~=3.6
+requests~=2.31.0
