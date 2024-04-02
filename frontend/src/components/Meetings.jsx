@@ -59,6 +59,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
 
   
   useEffect(getDocsInfo, [])
+  useEffect(() => updateCurrentMeeting(''),[])
   return (
     <>
     <UserInfo info={userInfo} />

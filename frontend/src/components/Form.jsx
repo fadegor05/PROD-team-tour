@@ -149,14 +149,17 @@ export default function Form({ userInfo, currentMeeting, updateCurrentMeeting, p
       {status == 'selectTime' &&
       <>
       <h2 className={styles.title}>Выберите время</h2>
+      <div className={styles.list}>
       {
         timesList.map(el => 
-          <div className={styles.listitem} key={el.start_datetime}>
-            <div className={styles.timeblock}><p className={styles.infofield}>{timeIntervalFormat(el.start_datetime)}</p></div>
-            <button className={styles.selectbutton} onClick={() => handleSecondConfirm(el.start_datetime)}>Выбрать</button>
+          <div className={styles.listitem} onClick={() => handleSecondConfirm(el.start_datetime)} key={el.start_datetime}>
+            <div className={styles.timeblock}>{timeIntervalFormat(el.start_datetime)}</div>
+            {/* <div className={styles.timeblock}><p className={styles.infofield}>{timeIntervalFormat(el.start_datetime)}</p></div> */}
+            {/* <button className={styles.selectbutton} onClick={() => handleSecondConfirm(el.start_datetime)}>Выбрать</button> */}
           </div>
           )
       }
+      </div>
       <button className={styles.confirmbutton} onClick={() => setStatus('new')}>Назад</button>
       </>
       }
