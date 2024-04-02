@@ -9,3 +9,6 @@ class UserGet(BaseModel):
     organization_type: str
     meetings: List[MeetingGet]
 
+
+class UserCreateGet(BaseModel):
+    phone: str
