@@ -14,7 +14,7 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
   
   function formatDate(date, delay) {
     let newDate = new Date(date)
-    if (delay != 15) {
+    if (delay != 0) {
       newDate = new Date(newDate.setMinutes(newDate.getMinutes() + delay))
     }
     newDate = new Intl.DateTimeFormat('ru-RU', {
