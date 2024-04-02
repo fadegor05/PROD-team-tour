@@ -1,6 +1,6 @@
 from typing import Tuple, List
 
-from app.service.api import request_ors_api
+from app.services.ors.api import request_ors_api
 
 
 async def get_route_duration(coordinates: List[Tuple[float, float]]) -> int:

@@ -10,7 +10,7 @@ from app.crud.agent import get_agents_all, create_agent, get_agent_by_id
 from app.crud.meeting import create_meeting, get_meetings_by_date_and_agent
 from app.crud.user import get_users_all, create_user, get_user_by_id
 from app.database import async_session
-from app.service.service import get_route_duration
+from app.services.ors.service import get_route_duration
 
 
 async def generate_datetime_dict(date: datetime, from_hour: int = 9, to_hour: int = 20) -> Dict:
