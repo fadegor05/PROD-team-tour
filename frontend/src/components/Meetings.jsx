@@ -71,8 +71,8 @@ export default function Meetings({ userInfo, updateCurrentMeeting }) {
         }
       })
       .catch(err => console.error(err))
-      .finally(() => setisLoading(false))
     }
+    setisLoading(false)
   }
 
   
