@@ -7,11 +7,11 @@ from fastapi import Query
 
 from app.core.utils import get_available_time_slots
 from app.crud.agent import get_agent_by_id
-from app.crud.meeting import get_meeting_by_id, create_meeting, update_meeting_status
+from app.crud.meeting import get_meeting_by_id, create_meeting, update_meeting_status, update_delay_status
 from app.api.router import api_router
 from app.crud.user import get_user_by_phone
 from app.database import async_session
-from app.schemas.meeting import MeetingGet, MeetingPost, MeetingPostResponse, MeetingPatch
+from app.schemas.meeting import MeetingGet, MeetingPost, MeetingPostResponse, MeetingPatch, MeetingDelayPatch
 from datetime import datetime, timedelta
 
 
@@ -24,7 +24,7 @@ async def get_meeting_by_id_handler(meeting_id: Annotated[int, Query()]) -> Meet
     response = MeetingGet(meeting_id=meeting.id,
                           start_datetime=meeting.start_datetime.isoformat(),
                           end_datetime=meeting.end_datetime.isoformat(),
-                          status=meeting.status, place=meeting.place,
+                          status=meeting.status, place=meeting.place, delay_status=meeting.delay_status,
                           agent_fullname=meeting.agent.fullname, agent_phone=meeting.agent.phone,
                           agent_image=meeting.agent.image)
     return response
@@ -38,6 +38,16 @@ async def update_meeting_handler(meeting_schema: MeetingPatch):
             raise HTTPException(status_code=404, detail="meeting not found")
         await update_meeting_status(session, meeting=meeting, status=meeting_schema.status)
     return HTTPException(status_code=200, detail="OK")
+
+
+@api_router.patch("/meeting_delay")
+async def update_meeting_delay_handler(delay_schema: MeetingDelayPatch):
+    async with async_session() as session:
+        meeting = await get_meeting_by_id(session, id=delay_schema.meeting_id)
+        if not meeting:
+            raise HTTPException(status_code=404, detail="meeting not found")
+        await update_delay_status(session, meeting=meeting, delay_status=delay_schema.delay_status)
+    return HTTPException(status_code=200, detail="Success")
 
 
 @api_router.post('/meeting')
